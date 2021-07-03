@@ -1,0 +1,25 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: remote-config
+  security:
+    user:
+      name: admin
+      password: s3cr3tpa55word
+  cloud:
+    config:
+      server:
+        git:
+          default-label: main
+          uri: git@github.com:pshekhar7/RemoteConfigTest.git
+          ignoreLocalSshSettings: true
+          strictHostKeyChecking: false
+          privateKey: "insert your private RSA key"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
