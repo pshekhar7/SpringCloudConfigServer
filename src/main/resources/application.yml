@@ -1,9 +1,42 @@
 server:
   port: 8888
+  application:
+    name: remote-config
+
+spring:
+  profiles:
+    active: jdbc
+
+---
 
 spring:
   application:
     name: remote-config
+  security:
+    user:
+      name: admin
+      password: s3cr3tpa55word
+  datasource:
+    url: jdbc:mysql://localhost:3306/homelake?allowPublicKeyRetrieval=true&useSSL=false&useLegacyDatetimeCode=false
+    username: devuser
+    password: Hello
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    config:
+      label: v1
+      profile: dev
+      server:
+        bootstrap: true
+        type: jdbc
+        order: 1
+        jdbc:
+          sql: SELECT PROP_KEY, PROP_VALUE from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?
+---
+
+spring:
+  config:
+    activate:
+      on-profile: github-config
   security:
     user:
       name: admin
@@ -16,10 +49,15 @@ spring:
           uri: git@github.com:pshekhar7/RemoteConfigTest.git
           ignoreLocalSshSettings: true
           strictHostKeyChecking: false
-          privateKey: "insert your private RSA key"
+          force-pull: true
+          deleteUntrackedBranches: true
+          privateKey: <your private RSA key>
+---
 
 management:
   endpoints:
     web:
       exposure:
         include: refresh
+
+allow-bean-definition-overriding: true
